@@ -82,14 +82,16 @@ logger.info("Model warmup complete")
 async def transcribe(audio: tuple[int, np.ndarray]):
     sample_rate, audio_array = audio
     logger.info(f"Sample rate: {sample_rate}Hz, Shape: {audio_array.shape}")
-    
+    language = os.getenv("TRANSCRIPTION_LANGUAGE", "swedish") # Get language from .env, default to swedish
+    logger.info(f"Using language: {language}") # Optional: log the language
+
     outputs = transcribe_pipeline(
         audio_to_bytes(audio),
         chunk_length_s=3,
         batch_size=1,
         generate_kwargs={
             'task': 'transcribe',
-            'language': 'english',
+            'language': language,
         },
         #return_timestamps="word"
     )

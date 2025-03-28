@@ -20,7 +20,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 
-MODEL_ID = os.getenv("MODEL_ID", "openai/whisper-large-v3-turbo")
+MODEL_ID = os.getenv("MODEL_ID", "KBLab/kb-whisper-large")
 
 
 device = get_device(force_cpu=False)
@@ -68,7 +68,9 @@ logger.info("Model warmup complete")
 async def transcribe(stream, audio: tuple[int, np.ndarray]):
     sample_rate, audio_array = audio
     logger.info(f"Sample rate: {sample_rate}Hz, Shape: {audio_array.shape}")
-    
+    language = os.getenv("TRANSCRIPTION_LANGUAGE", "english") # Get language from .env
+    logger.info(f"Using language: {language}") # Optional: log the language
+
     # Convert to mono if stereo
     if audio_array.ndim > 1:
         audio_array = audio_array.mean(axis=1)
@@ -83,11 +85,11 @@ async def transcribe(stream, audio: tuple[int, np.ndarray]):
 
     outputs = transcribe_pipeline(
         {"sampling_rate": sample_rate, "raw": audio_array},
-        chunk_length_s=10,
+        chunk_length_s=4,
         batch_size=1,
         generate_kwargs={
             'task': 'transcribe',
-            'language': 'english',
+            'language': language,
         },
         #return_timestamps="word"
     )
