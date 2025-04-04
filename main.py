@@ -34,10 +34,11 @@ logger = logging.getLogger(__name__)
 
 UI_MODE = os.getenv("UI_MODE", "fastapi")
 APP_MODE = os.getenv("APP_MODE", "local")
-MODEL_ID = os.getenv("MODEL_ID", "openai/whisper-large-v3-turbo")
+MODEL_ID = os.getenv("MODEL_ID", "KBLab/kb-whisper-tiny")
 
 
 device = get_device(force_cpu=False)
+
 torch_dtype, np_dtype = get_torch_and_np_dtypes(device, use_bfloat16=False)
 logger.info(f"Using device: {device}, torch_dtype: {torch_dtype}, np_dtype: {np_dtype}")
 
@@ -75,7 +76,7 @@ transcribe_pipeline = pipeline(
 # Warm up the model with empty audio
 logger.info("Warming up Whisper model with dummy input")
 warmup_audio = np.zeros((16000,), dtype=np_dtype)  # 1s of silence
-transcribe_pipeline(warmup_audio)
+transcribe_pipeline({"sampling_rate": 16000, "raw": warmup_audio})
 logger.info("Model warmup complete")
 
 
@@ -101,10 +102,10 @@ async def transcribe(audio: tuple[int, np.ndarray]):
 logger.info("Initializing FastRTC stream")
 stream = Stream(
     handler=ReplyOnPause(
-        transcribe,
+        transcribe, input_sample_rate=16000, output_sample_rate=16000, # Added sample_rate as handled for whisper models
         algo_options=AlgoOptions(
-            # Duration in seconds of audio chunks (default 0.6)
-            audio_chunk_duration=0.6,
+            # Duration in seconds of audio chunks (default 0.6) - change to 0.8 for more coherence
+            audio_chunk_duration=0.8,
             # If the chunk has more than started_talking_threshold seconds of speech, the user started talking (default 0.2)
             started_talking_threshold=0.2,
             # If, after the user started speaking, there is a chunk with less than speech_threshold seconds of speech, the user stopped speaking. (default 0.1)
@@ -117,10 +118,10 @@ stream = Stream(
             min_speech_duration_ms=250,
             # Max duration of speech chunks, longer will be split (default float('inf'))
             max_speech_duration_s=30,
-            # Wait for ms at the end of each speech chunk before separating it (default 2000)
-            min_silence_duration_ms=2000,
+            # Wait for ms at the end of each speech chunk before separating it (default 2000) - change to 1500
+            min_silence_duration_ms=1500,
             # Chunk size for VAD model. Can be 512, 1024, 1536 for 16k s.r. (default 1024)
-            window_size_samples=1024,
+            window_size_samples=512, # Changed to 512 to match 16kHz
             # Final speech chunks are padded by speech_pad_ms each side (default 400)
             speech_pad_ms=400,
         ),
@@ -165,7 +166,7 @@ def _(webrtc_id: str):
 if __name__ == "__main__":
 
     server_name = os.getenv("SERVER_NAME", "localhost")
-    port = os.getenv("PORT", 7860)
+    port = int(os.getenv("PORT", 7860)) # added int to avoid TypeError
     
     if UI_MODE == "gradio":
         logger.info("Launching Gradio UI")

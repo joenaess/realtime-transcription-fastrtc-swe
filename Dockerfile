@@ -24,10 +24,10 @@ COPY . /app/
 # Make port 7860 available to the world outside this container (adjust if using a different port)
 EXPOSE 7860
 
-# Define environment variables (can be overridden at runtime)
+# Define environment variables (can be overridden at runtime) - change tiny to large for prod
 ENV UI_MODE="fastapi"
 ENV APP_MODE="local"
-ENV MODEL_ID="KBLab/kb-whisper-large"
+ENV MODEL_ID="KBLab/kb-whisper-tiny"
 ENV TRANSCRIPTION_LANGUAGE="swedish"
 ENV SERVER_NAME="0.0.0.0"
 ENV PORT="7860"

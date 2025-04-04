@@ -1,7 +1,7 @@
 accelerate==1.4.0
-fastrtc==0.0.15
-fastrtc[vad]==0.0.15
+fastrtc==0.0.19
+fastrtc[vad]==0.0.19
 python-dotenv==1.0.1
-transformers==4.49.0
+transformers @ git+https://github.com/huggingface/transformers@46350f5eae87ac1d168ddfdc57a0b39b64b9a029
 torch==2.6.0
 torchaudio==2.6.0

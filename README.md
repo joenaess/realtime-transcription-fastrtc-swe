@@ -44,13 +44,8 @@ uv pip install -r requirements.txt
 ```
 
 </details>
+transformers @ git+https://github.com/huggingface/transformers@46350f5eae87ac1d168ddfdc57a0b39b64b9a029
 
-<summary>🐍 Using pip</summary>
-
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
 ```
 
 </details>
@@ -119,13 +114,13 @@ This repository includes a `Dockerfile` for easy setup and deployment.
 
     ```bash
     # Basic run, mapping port 7860
-    docker run -p 7860:7860 --rm --name whisper-swe realtime-transcription-swe
+    #docker run -p 7860:7860 --rm --name whisper-swe realtime-transcription-swe
 
     # Optional: Override log level (e.g., for debugging)
     # docker run -p 7860:7860 -e LOG_LEVEL="DEBUG" --rm --name whisper-swe realtime-transcription-swe
 
     # Optional: For NVIDIA GPU usage (requires nvidia-docker & compatible setup)
-    # docker run --gpus all -p 7860:7860 --rm --name whisper-swe realtime-transcription-swe
+    docker run --gpus all -p 7860:7860 --rm --name whisper-swe realtime-transcription-swe
     ```
 
 Access the application at `http://localhost:7860`.

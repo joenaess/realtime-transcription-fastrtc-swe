@@ -5,6 +5,8 @@ logs/
 docs/
 
 .DS_Store
+nohup.out
 
 */__pycache__/
 space/
+test.py
