@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 UI_MODE = os.getenv("UI_MODE", "fastapi")
 APP_MODE = os.getenv("APP_MODE", "local")
-MODEL_ID = os.getenv("MODEL_ID", "KBLab/kb-whisper-tiny")
+MODEL_ID = os.getenv("MODEL_ID", "KBLab/kb-whisper-large")
 
 
 device = get_device(force_cpu=False)
@@ -151,17 +151,7 @@ async def index():
 def _(webrtc_id: str):
     logger.debug(f"New transcript stream request for webrtc_id: {webrtc_id}")
     async def output_stream():
-        try:
-            async for output in stream.output_stream(webrtc_id):
-                transcript = output.args[0]
-                logger.debug(f"Sending transcript for {webrtc_id}: {transcript[:50]}...")
-                yield f"event: output\ndata: {transcript}\n\n"
-        except Exception as e:
-            logger.error(f"Error in transcript stream for {webrtc_id}: {str(e)}")
-            raise
-
-    return StreamingResponse(output_stream(), media_type="text/event-stream")
-
+        try:https://github.com/joenaess/realtime-transcription-fastrtc-swe
 
 if __name__ == "__main__":
 

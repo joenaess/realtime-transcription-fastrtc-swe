@@ -27,7 +27,7 @@ EXPOSE 7860
 # Define environment variables (can be overridden at runtime) - change tiny to large for prod
 ENV UI_MODE="fastapi"
 ENV APP_MODE="local"
-ENV MODEL_ID="KBLab/kb-whisper-tiny"
+ENV MODEL_ID="KBLab/kb-whisper-large"
 ENV TRANSCRIPTION_LANGUAGE="swedish"
 ENV SERVER_NAME="0.0.0.0"
 ENV PORT="7860"
