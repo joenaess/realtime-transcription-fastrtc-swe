@@ -151,7 +151,16 @@ async def index():
 def _(webrtc_id: str):
     logger.debug(f"New transcript stream request for webrtc_id: {webrtc_id}")
     async def output_stream():
-        try:https://github.com/joenaess/realtime-transcription-fastrtc-swe
+        try:
+            async for output in stream.output_stream(webrtc_id):
+                transcript = output.args[0]
+                logger.debug(f"Sending transcript for {webrtc_id}: {transcript[:50]}...")
+                yield f"event: output\ndata: {transcript}\n\n"
+        except Exception as e:
+            logger.error(f"Error in transcript stream for {webrtc_id}: {str(e)}")
+            raise
+
+    return StreamingResponse(output_stream(), media_type="text/event-stream")
 
 if __name__ == "__main__":
 
